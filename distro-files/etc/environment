@@ -1,0 +1,36 @@
+GITFLAGS="--depth 1 --recurse-submodules"
+GPU_ARCHS=gfx803
+GPU_FORCE_64BIT_PTR=1
+GPU_MAX_HEAP_SIZE=100
+GPU_MAX_ALLOC_PERCENT=100
+GPU_SINGLE_ALLOC_PERCENT=100
+LINGUAS=en
+PYTORCH_ROCM_ARCH=gfx803
+ROC_ENABLE_PRE_VEGA=1
+
+CC=clang
+CPP=clang-cpp
+CXX=clang++
+LD=lld
+CC_LD=lld
+CXX_LD=lld
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+RANLIB=llvm-ranlib
+HOSTCC=clang
+HOSTCXX=clang++
+HOSTAR=llvm-ar
+HOSTLD=lld
+
+CPPFLAGS="-march=znver2 -mtune=znver2 -pipe -O3 -flto -g0 -I/usr/include"
+CFLAGS="-march=znver2 -mtune=znver2 -pipe -O3 -flto -g0 -I/usr/include"
+CXXFLAGS="-march=znver2 -mtune=znver2 -pipe -O3 -flto -g0 -I/usr/include"
+LDFLAGS="-fuse-ld=lld -flto -O3 -pthread -L/usr/lib"
+RUSTFLAGS="-C opt-level=3 -C target-cpu=znver2 -C codegen-units=1 -C linker=clang -C linker-plugin-lto -C panic=abort -C debuginfo=0 -C strip=debuginfo"
+DEBUG_CFLAGS="-fasynchronous-unwind-tables -g0"
+DEBUG_CXXFLAGS="-fasynchronous-unwind-tables -g0"
+DEBUG_RUSTFLAGS="-C debuginfo=0"

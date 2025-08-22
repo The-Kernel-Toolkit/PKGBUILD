@@ -1,0 +1,58 @@
+name: Build Arch packages
+
+permissions:
+  packages: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 0 4 * *'
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    container: ghcr.io/the-kernel-toolkit/arch-pkgbuild:latest
+
+    steps:
+      - name: Compile Arch Packages
+        run: |
+          su TKT
+          cd /home/TKT/PKGBUILDS
+          git pull
+          ./compile.sh
+
+      - name: Package per PKGBUILD
+        run: |
+          cd /home/TKT/makepkg_pkgs/
+          for dir in */; do
+            pkgname=$(basename "$dir")
+            tar -czf "${pkgname}.tar.zstd" -C "$dir" .
+          done
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-pkgbuilds
+          path: /home/TKT/makepkg_pkgs/*.tar.zstd
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Arch Packages ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: /home/TKT/makepkg_pkgs/*.tar.zstd
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
